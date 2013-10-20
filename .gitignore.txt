@@ -8,3 +8,4 @@ Assembly-CSharp.csproj
 
 #Folders useless
 /Library
+/Temp
