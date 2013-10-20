@@ -1,0 +1,10 @@
+#Useless files at the root (used in scripting)
+bombercraft-csharp.sln
+bombercraft.userprefs
+bombercraft.sln
+Assembly-CSharp-vs.csproj
+Assembly-CSharp.pidb
+Assembly-CSharp.csproj
+
+#Folders useless
+/Library
