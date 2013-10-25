@@ -1,0 +1,4 @@
+Avancer : Touches Directionnelles
+Poser une Bombe : Molette de la Souris.
+Sauter : Clic Droit
+Poser un Bloc : Clic Gauche
