@@ -1,7 +1,5 @@
 Todo-List pour la Démonstration :
 
-- Ajouter des caisses sur la map et les répartir comme dans Bomberman.
-
 - Ajouter les modifications de florent sur le dépot des blocs. (Eviter les problèmes de collision à l'apparition).
 
 - Ajouter la mise à jour des compteurs (propres à chaque joueur) car le visuel ne suffit pas. (Morts et Nombre de Blocs)
@@ -10,6 +8,5 @@ Todo-List pour la Démonstration :
 
 - Ajouter un Timer.
 
-- Ajouter une zone en dessous du terrain pour savoir quand le joueur tombe (pour qu'il soit re-téléporté au spawn et qu'on lui compte une mort).
-
 - Ajouter la collision entre une bombe et un joueur pour incrémenter son nombre de mort et le retéléporté au spawn.
+
