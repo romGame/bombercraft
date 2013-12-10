@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/* Auteur : Romain SPENATO */
+
 public class mainMenuOptionsScript : MonoBehaviour {
 	
 	// booleens de validation de sélection
@@ -15,13 +17,15 @@ public class mainMenuOptionsScript : MonoBehaviour {
 	private Color colorSelected = new Color(255,255,255);
 	private Color colorNotSelected = new Color(0,0,0);
 	
-	// Valeurs que l'on aura besoin de manipuler
+	// Propriété tranform de la flèche. (On va manipuler sa sous propriété "position")
 	[SerializeField]
 		private Transform arrowY;
 	
+	// Le texte "PLAY". On va utiliser cet variable pour manipuler sa couleur lors de la sélection.
 	[SerializeField]
 		private TextMesh playOptionText;
 	
+	// Le texte "EXIT". On va utiliser cet variable pour manipuler sa couleur lors de la sélection.
 	[SerializeField]
 		private TextMesh exitOptionText;
 
@@ -53,9 +57,11 @@ public class mainMenuOptionsScript : MonoBehaviour {
 		// Le joueur appuie sur la touche 'ENTER'
 		if (Input.GetKeyDown(KeyCode.Return))
         {
+			// Si l'utilisateur a choisi "PLAY", on charge la scène du lobby de connection.
 			if(playIsSelected) {
 				Application.LoadLevel("Menu");
 			}
+			// Sinon il a choisi "EXIT" et on quitte l'application. (PS : cette fonction ne quitte pas sur l'éditeur Unity)
 			else {
 				Application.Quit();
 			}

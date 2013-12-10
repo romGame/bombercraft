@@ -1,20 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/* Auteur : Romain SPENATO */
+
 public class victoryScript : MonoBehaviour {
 	
 	public bool isVictorious = false;
-
-	// Use this for initialization
-	void Start () {
 	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-	
+	/* NE RENTRE JAMAIS DEDANS AU CONTACT DU DRAPEAU */
 	void OnTriggerEnter() {
         isVictorious = true;
 		Debug.Log ("plop");

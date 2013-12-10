@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+/* Auteur : Jimmy SOIKOVITCH */
+
 public class BombManager  {
 
     #region variable
@@ -17,14 +19,9 @@ public class BombManager  {
     private Vector3 _PositionHide = new Vector3(1000, 1000, 1000); 
     #endregion
 
-
-
-
-    private BombManager()
-    {
+    private BombManager() {
         _listBomb = new Queue<GameObject>();
     }
-
 
     /// <summary>
     /// Permet de récupérer l'instance du singleton
@@ -32,13 +29,10 @@ public class BombManager  {
     /// <returns></returns>
     public static BombManager GetBombManagerInstance()
     {
-
-        if (_instance == null)
-        {
-            lock (instanceLock)
-            {
-                if (_instance == null) //on vérifie encore, au cas où l'instance aurait été créée entretemps.
-                {
+        if (_instance == null) {
+            lock (instanceLock) {
+                if (_instance == null) {
+					//on vérifie encore, au cas où l'instance aurait été créée entretemps.
                     _instance = new BombManager();
                 }
             }
@@ -46,20 +40,14 @@ public class BombManager  {
         return _instance;
     }
 
-
-
-
     /// <summary>
     /// Permet de faire disparaitre la caisse de la map et de l'affiler au joueur
     /// </summary>
     /// <param name="caisse"></param>
-    public void AddBomb(GameObject bomb)
-    {
+    public void AddBomb(GameObject bomb) {
         _listBomb.Enqueue(bomb);
         bomb.transform.position = _PositionHide;
     }
-
-
 
     /// <summary>
     /// Permet de récupérer la prochaine caisse dans la queue. Retourne null si plus d'objet
@@ -68,28 +56,20 @@ public class BombManager  {
     public GameObject GetBomb()
     {
         GameObject bomb;
-        try
-        {
-            if (_listBomb.Count > 0)
-            {
+        try {
+            if (_listBomb.Count > 0) {
                 bomb = _listBomb.Dequeue();
 
                 //Initialisation des variables du script bombExplosion pour rejouer l'animation.
                 bomb.GetComponent<bombExplosionScript>().EnableBomb();
             }
-            else
-            {
+            else {
                 bomb = null;
             }
         }
-        catch (Exception)
-        {
-
+        catch (Exception) {
             bomb = null;
         }
         return bomb;
     }
-
-
-
 }

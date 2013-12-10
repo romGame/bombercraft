@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/* Auteur : Jimmy STOIKOVITCH */
+
 public class CameraScript : MonoBehaviour {
-
-
+	
     private bool wasLocked = false;
 
-    public bool WasLocked
-    {
+    public bool WasLocked {
         get { return wasLocked; }
         set { wasLocked = value; }
     }
@@ -20,34 +20,26 @@ public class CameraScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //Pour bloquer la souris 
-        if (!Screen.lockCursor && wasLocked)
-        {
+        if (!Screen.lockCursor && wasLocked) {
             wasLocked = false;
             DidUnlockCursor();
         }
-        else if (Screen.lockCursor && !wasLocked)
-        {
+        else if (Screen.lockCursor && !wasLocked) {
             wasLocked = true;
             DidLockCursor();
         }
 	}
 
-
     #region Blocage de la souris
-    void DidLockCursor()
-    {
+    void DidLockCursor() {
         guiTexture.enabled = false;
     }
-    void DidUnlockCursor()
-    {
-
+    void DidUnlockCursor() {
         guiTexture.enabled = true;
     }
 
-    void OnMouseDown()
-    {
+    void OnMouseDown() {
         Screen.lockCursor = true;
     }
     #endregion
-
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/* Auteur : Romain SPENATO et Jimmy STOIKOVITCH */
+
 public class bombExplosionScript : MonoBehaviour {
 	
 	// Attributs
@@ -14,41 +16,34 @@ public class bombExplosionScript : MonoBehaviour {
     Vector3 TailleExplosion = Vector3.zero;
 
     BombManager _BombManager = null;
-
-    //private Vector3 _PositionHide = new Vector3(1000, 1000, 1000);
 	
 	Animation bombTickingAnimation = null;
-	public Animation BombTicking
-    {
+	public Animation BombTicking {
         get { return bombTickingAnimation; }
         set { bombTickingAnimation = value; }
     }
 	
 	AudioSource bombExplosionSound = null;
-	public AudioSource BombExplosionSound
-    {
+	public AudioSource BombExplosionSound {
         get { return bombExplosionSound; }
         set { bombExplosionSound = value; }
     }
 
     SphereCollider bombExplosionTrigger = null;
-    public SphereCollider BombExplosionTrigger
-    {
+    public SphereCollider BombExplosionTrigger {
         get { return bombExplosionTrigger; }
         set { bombExplosionTrigger = value; }
     }
 
 
 	ParticleSystem bombExplosionParticle = null;
-	public ParticleSystem BombExplosionParticle
-    {
+	public ParticleSystem BombExplosionParticle {
         get { return bombExplosionParticle; }
         set { bombExplosionParticle = value; }
     }
 	
 	Transform bombTransform = null;
-	public Transform BombTransform
-    {
+	public Transform BombTransform {
         get { return bombTransform; }
         set { bombTransform = value; }
     }
@@ -58,7 +53,7 @@ public class bombExplosionScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		// Retrieve bomb manager instance
         _BombManager = BombManager.GetBombManagerInstance();
         // Retrieve the bomb ticking animation and launch it
         bombTickingAnimation = this.GetComponent<Animation>();
@@ -75,14 +70,11 @@ public class bombExplosionScript : MonoBehaviour {
         TailleExplosion.Set(tailleExplosion, tailleExplosion, tailleExplosion);
 
         SphereCollider[] listeSphereCollider = this.GetComponentsInChildren<SphereCollider>();
-        for(int i = 0; i< listeSphereCollider.Length; i++)
-        {
-            if (listeSphereCollider[i].gameObject.layer == LayerMask.NameToLayer("Explosion"))
-            {
+        for(int i = 0; i< listeSphereCollider.Length; i++) {
+            if (listeSphereCollider[i].gameObject.layer == LayerMask.NameToLayer("Explosion")) {
                 bombExplosionTrigger = (SphereCollider)listeSphereCollider[i];
                 bombExplosionTrigger.isTrigger = false;
                 bombExplosionTrigger.enabled = false;
-                //Debug.Log("sphere collider : " + bombExplosionTrigger.name);
 
                 bombExplosionTrigger.GetComponent<SphereCollider>().radius = (0.11111f * tailleExplosion);
                 break;
@@ -93,10 +85,8 @@ public class bombExplosionScript : MonoBehaviour {
 
         Transform[] listeMesh = this.GetComponentsInChildren<Transform>();
         
-        for(int i = 0; i< listeMesh.Length; i++)
-        {
-            if (listeMesh[i].gameObject.layer == LayerMask.NameToLayer("ExplosionGraphic"))
-            {
+        for(int i = 0; i< listeMesh.Length; i++) {
+            if (listeMesh[i].gameObject.layer == LayerMask.NameToLayer("ExplosionGraphic")) {
                 bomGraphic = ((Transform)listeMesh[i]);
                 bomGraphic.transform.localScale = TailleExplosion;
                 //bombGraphicMesh.enabled = false;
@@ -110,8 +100,7 @@ public class bombExplosionScript : MonoBehaviour {
 	}
 
 
-    public void EnableBomb()
-    {
+    public void EnableBomb() {
         bombActivated = true;
         bombExplosionTrigger.isTrigger = false;
         bombExplosionTrigger.enabled = false;
@@ -121,9 +110,7 @@ public class bombExplosionScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-		if(bombActivated) 
-        {
+		if(bombActivated) {
 			if(isTicking == false) {
 				isTicking = true;
 				BombTicking.Play("bombTickingAnimation");
@@ -152,19 +139,21 @@ public class bombExplosionScript : MonoBehaviour {
 
                 
 			}
-		}
-		
+		}	
 	}
 	
 	IEnumerator ExplosionAnim() {
         // Play the Explosion Sound.
 		BombExplosionSound.Play();
+		
 		// PLay the Explosion Particle
 		BombExplosionParticle.Play();
-        yield return new WaitForSeconds(2f);	
-		// Move it in another place to make it disappear
-        //bombTransform.Translate(_PositionHide);
+		
+        yield return new WaitForSeconds(2f);
+		
         _BombManager.AddBomb(this.gameObject);
+		
+		// Move it in another place to make it disappear
         bombExplosion.Hide();
     }
 }
