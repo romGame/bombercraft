@@ -1,6 +1,5 @@
 Todo-List pour la Démonstration :
 
-- Ajouter les modifications de florent sur le dépot des blocs. (Eviter les problèmes de collision à l'apparition).
 
 - Ajouter la mise à jour des compteurs (propres à chaque joueur) car le visuel ne suffit pas. (Morts et Nombre de Blocs)
 

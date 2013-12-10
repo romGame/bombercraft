@@ -11,11 +11,17 @@ public class JoueurLogic : MonoBehaviour
     [SerializeField]
     private float _VitesseDeplacement = 3f;
     [SerializeField]
-    private float _VitesseSaut = 5f;
+    private float _VitesseSaut = 8f;
     [SerializeField]
     private float _VitesseRotationCamera = 150f;
     [SerializeField]
     private float _DelaisRafreshServeur = 0.05f;
+	
+	[SerializeField]
+    private BoxCollider _ViseurCollider = null;
+	
+	[SerializeField]
+	private bool _airCollision = false ;
 
     //Permet de créer un copie de cet objet quand un joueur se connecte au server 
     //[SerializeField]
@@ -109,9 +115,77 @@ public class JoueurLogic : MonoBehaviour
         #region Gestion des entrées utilisateur
         if (isLocalPlayer)
         {
+			RaycastHit hit;
+            
+            //Placement d'une caisse
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+				
+				//Détection de collision pour placer la caisse
+				
+				if( Physics.Raycast(transform.position , transform.forward, out hit, 3   ) )
+				{
+					
+					float angle = Mathf.Atan2 (hit.point.x -transform.position.x, hit.point.z -transform.position.z );
+					
+					float DistanceFin = Vector3.Distance(transform.position, hit.point) - 1 ;
+					if( DistanceFin >= 1)
+					{
+						Vector3 finalPos = transform.position + new Vector3(Mathf.Sin(angle )*DistanceFin, hit.point.y, Mathf.Cos(angle )*DistanceFin );
+	                	_NetworkView.RPC("CaissePoseJoueur",
+                        RPCMode.Server,
+                        IdJoueur,
+                        finalPos);
+					}
+                	
+					Debug.Log (hit.collider.name + " touché");
+				}
+				else
+				{
+					_NetworkView.RPC("CaissePoseJoueur",
+                        RPCMode.Server,
+                        IdJoueur,
+                        _Viseur.position);
+				}
+            }
 
-            
-            
+            //Placement d'une bombe
+            if (Input.GetKeyDown(KeyCode.Mouse2))
+            {
+                _NetworkView.RPC("BombPoseJoueur",
+                        RPCMode.Server,
+                    IdJoueur);
+            }
+			
+			_airCollision = false;
+			//Detection d'un "sol"
+			if (Physics.Raycast (transform.position, -Vector3.up, out hit, 1f ) ) 
+			{
+				_isJumping = false;
+
+			}
+			else 
+			{
+				_isJumping = true;
+				//Detection d'une collision dans les airs
+				if (Physics.Raycast (transform.position, -Vector3.left, out hit, 0.5f ) || Physics.Raycast (transform.position, Vector3.left, out hit, 0.5f )
+					||Physics.Raycast (transform.position, -Vector3.forward, out hit, 0.5f ) || Physics.Raycast (transform.position, Vector3.forward, out hit, 0.5f )) 
+				{
+					_airCollision = true;
+	
+				}
+
+			}
+			
+            //Gestion du saut
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (!_isJumping)
+                {
+                    _Personnage.AddForce(_VitesseSaut * _Personnage.transform.up + _Personnage.velocity.normalized * _directionalJumpFactor, ForceMode.VelocityChange);
+                }
+            }
+			
         }
         #endregion
     }
@@ -121,9 +195,15 @@ public class JoueurLogic : MonoBehaviour
 
         if (isLocalPlayer)
         {
-
             //Déplacement du joueur
-            _MoveDirection.Set(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+			if(!_airCollision)
+			{
+            	_MoveDirection.Set(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+			}
+			else
+			{
+				_MoveDirection.Set (0,0,0);
+			}
 
             //Pour jouer les animations de déplacement
             if (_MoveDirection != Vector3.zero && !_DeplacementAnimation.isPlaying)
@@ -139,36 +219,6 @@ public class JoueurLogic : MonoBehaviour
             _Controller.Translate(_MoveDirection * _VitesseDeplacement * Time.deltaTime);
             //Faire une rotation sur l'axe des Y du personnage en fonction du mouvement de la souris
             _Controller.Rotate(_AxeRotationJoueur, Input.GetAxis("Mouse X") * _VitesseRotationCamera * Time.deltaTime);
-            
-
-            //Gestion du saut
-            if (Input.GetKeyDown(KeyCode.Mouse1))
-            {
-                if (!_isJumping)
-                {
-                    _Personnage.AddForce(_VitesseSaut * _Personnage.transform.up + _Personnage.velocity.normalized * _directionalJumpFactor, ForceMode.VelocityChange);
-                    _isJumping = true;
-                }
-            }
-
-
-            //Placement d'une caisse
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                _NetworkView.RPC("CaissePoseJoueur",
-                        RPCMode.Server,
-                        IdJoueur,
-                        _Viseur.position);
-
-            }
-
-            //Placement d'une bombe
-            if (Input.GetKeyDown(KeyCode.Mouse2))
-            {
-                _NetworkView.RPC("BombPoseJoueur",
-                        RPCMode.Server,
-                    IdJoueur);
-            }
 
             if (Time.time - _lastTimeSave > _DelaisRafreshServeur)//En fonction du délais de rafraichissement
             {
@@ -188,15 +238,6 @@ public class JoueurLogic : MonoBehaviour
 
 
     #region RPC vide (nécéssaire pout fonctionner)
-    /*[RPC]
-    void DeplacementJoueur(NetworkViewID playerID, Vector3 translation)
-    {
-    }
-
-    [RPC]
-    void RotationJoueur(NetworkViewID playerID, Vector3 axe, float angle)
-    {
-    }*/
 
     [RPC]
     void TranslateJoueur(NetworkViewID playerID, Vector3 pos, Quaternion rot)
@@ -215,15 +256,4 @@ public class JoueurLogic : MonoBehaviour
     {
     }
     #endregion
-
-    void OnCollisionEnter(Collision collision)
-    {
-
-        //Gestion du saut
-        if (_isJumping && (collision.gameObject.layer == LayerMask.NameToLayer("Sol") || collision.gameObject.layer == LayerMask.NameToLayer("CaisseDestructible")))
-        {
-            _isJumping = false;
-        }
-    }
-
 }
